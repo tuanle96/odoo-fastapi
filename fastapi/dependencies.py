@@ -27,10 +27,23 @@ def company_id() -> int | None:
     return None
 
 
-def odoo_env(company_id: Annotated[int | None, Depends(company_id)]) -> Environment:
+def user_id() -> int | None:
+    """This method may be overriden by the FastAPI app to set the allowed company
+    in the Odoo env of the endpoint. By default, the company defined on the
+    endpoint record is used.
+    """
+    return None
+
+def odoo_env(
+    company_id: Annotated[int | None, Depends(company_id)],
+    user: Annotated[int | None, Depends(user_id)],
+) -> Environment:
     env = odoo_env_ctx.get()
     if company_id is not None:
         env = env(context=dict(env.context, allowed_company_ids=[company_id]))
+        
+    if user is not None:
+        env.uid = user
 
     yield env
 

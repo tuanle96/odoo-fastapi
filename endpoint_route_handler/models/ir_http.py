@@ -35,6 +35,11 @@ class IrHttp(models.AbstractModel):
         for endpoint_rule in e_registry.get_rules():
             _logger.debug("LOADING %s", endpoint_rule)
             endpoint = endpoint_rule.endpoint
+            
+            # append PATCH method in to endpoint.routing.methods
+            if "PATCH" not in endpoint.routing["methods"]:
+                endpoint.routing["methods"].append("PATCH")
+
             for url in endpoint_rule.routing["routes"]:
                 yield (url, endpoint)
 
