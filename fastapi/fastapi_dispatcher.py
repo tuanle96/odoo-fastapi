@@ -22,7 +22,9 @@ class FastApiDispatcher(Dispatcher):
         # don't parse the httprequest let starlette parse the stream
         self.request.params = {}  # dict(self.request.get_http_params(), **args)
         environ = self._get_environ()
-        root_path = "/" + environ["PATH_INFO"].split("/")[1]
+        full_path = environ["PATH_INFO"]
+        root_path = "/".join(full_path.split("/")[:-1])
+
         # TODO store the env into contextvar to be used by the odoo_env
         # depends method
         fastapi_endpoint = self.request.env["fastapi.endpoint"].sudo()
