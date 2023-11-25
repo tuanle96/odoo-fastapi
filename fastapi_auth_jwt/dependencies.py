@@ -230,13 +230,19 @@ class AuthJwtOdooEnv(BaseAuthJwt):
         validator = _get_auth_jwt_validator(
             self.validator_name or default_validator_name, env
         )
+        if self.allow_unauthenticated and not _request_has_authentication(
+            request, authorization_header, validator
+        ):
+            return Environment(env.cr, uid=env.ref("base.public_user").id, context={})
         payload, validator = _get_jwt_payload_and_validator(
             request, response, authorization_header, validator
         )
         uid = validator._get_and_check_uid(payload)
         
         # return new env with uid
-        env.uid = uid
+        # env.uid = uid
+        
+        env = Environment(env.cr, uid=uid, context={})
         
         return env
 
