@@ -81,6 +81,8 @@ instance/
 
 .pyc
 
+*.pyc
+
 # Sphinx documentation
 docs/_build/
 
